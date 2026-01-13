@@ -1,0 +1,14 @@
+:root {
+  /* Color System */
+  --color-primary: #FF385C;
+  --color-accent: #FEBF4F; /* Secondary accent */
+  --color-badge: #003B95;  /* The specific blue used for "Genius" badges */
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F7F7F8;
+  --text-primary: #222222;
+  --text-muted: #666666;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  --radius-card: 8px;      /* Tighter radius based on your image */
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+}

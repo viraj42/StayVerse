@@ -1,0 +1,88 @@
+:root {
+  --color-primary: #FF385C;
+  --color-accent: #FEBF4F;
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F7F7F8;
+  --text-primary: #222222;
+  --text-muted: #666666;
+  --font-sans: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --radius-card: 12px;
+  --radius-search: 32px;
+  --shadow-subtle: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-dropdown: 0 6px 16px rgba(0,0,0,0.12);
+  --duration-short: 200ms;
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+}
+
+.err-box {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-dropdown);
+  font-family: var(--font-sans);
+
+  position: fixed; 
+  top: 20px;
+  right: 20px;
+  max-width: 350px;
+  width: 90%; 
+  z-index: 9999;
+  overflow: hidden; 
+  display: flex;
+  animation: slideIn var(--duration-short) var(--ease-standard);
+}
+  .side-bar {
+  width: 8px;
+  background-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.inner-flex {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  gap: 12px;
+}
+
+.icon-thing {
+  font-size: 1.2rem;
+}
+
+.txt {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  flex-grow: 1;
+}
+
+.c-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--duration-short);
+}
+
+.c-btn:hover {
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+/* Simple slide in animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
