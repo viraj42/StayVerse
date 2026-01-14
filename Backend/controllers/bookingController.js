@@ -28,10 +28,13 @@ module.exports.createBooking = async (req, res) => {
     if (String(listing.hostId) === req.user.userId) {
       return res.status(400).json({ error: "You cannot book your own listing" });
     }
-    const isAvailable = await isListingAvailable(listingId, startDate, endDate);
-    if (!isAvailable) {
-      return res.status(400).json({ error: "Selected dates are not available" });
-    }
+    const isAvailable = await isListingAvailable(
+  listingId,
+  startDate,
+  endDate,
+  rooms || 1
+);
+
     const priceDetails = calculateBookingPrice({
       listing,
       startDate,
@@ -117,19 +120,23 @@ module.exports.performBooking = async (req, res) => {
     }
     // Re-check availability on approval
     if (status === "APPROVED") {
-      const available = await isListingAvailable(
-        booking.listingId,
-        booking.startDate,
-        booking.endDate
-      );
-      if (!available) {
-        return res.status(400).json({ error: "Booking dates no longer available" });
-      }
-      await Listing.findByIdAndUpdate(
-        booking.listingId,
-        { $inc: { bookingCount: 1 } }
-      );
-    }
+  const isAvailable = await isListingAvailable(
+    booking.listingId,
+    booking.startDate,
+    booking.endDate,
+    booking.rooms || 1
+  );
+
+  if (!isAvailable) {
+    return res.status(400).json({ error: "Selected dates are not available" });
+  }
+
+  await Listing.findByIdAndUpdate(
+    booking.listingId,
+    { $inc: { bookingCount: 1 } }
+  );
+}
+
     booking.status = status;
     await booking.save();
     return res.json(booking);
@@ -169,6 +176,30 @@ module.exports.cancelBooking = async (req, res) => {
 
 
 
+module.exports.checkBookingAvailability = async (req, res) => {
+  try {
+    const { listingId, startDate, endDate, rooms } = req.body;
+
+    if (!listingId || !startDate || !endDate) {
+      return res.status(400).json({ available: false });
+    }
+
+    const available = await isListingAvailable(
+      listingId,
+      startDate,
+      endDate,
+      rooms || 1
+    );
+
+    return res.json({ available });
+  } catch (error) {
+    console.error("CHECK AVAILABILITY ERROR:", error);
+    return res.json({ available: false });
+  }
+};
+
+
+
 //guest listings
 module.exports.getGuestBookings = async (req, res) => {
   try {
@@ -178,11 +209,13 @@ module.exports.getGuestBookings = async (req, res) => {
 
     const bookings = await Booking.find({ guestId: req.user.userId })
       .sort({ createdAt: -1 })
-      .populate({
-        path: "listingId",
-        select: "title location images pricePerNight addonPrices",
-        options: { lean: true }
-      });
+     .populate({
+  path: "listingId",
+  select: "title location images pricePerNight discountPercentage addonPrices",
+  options: { lean: true }
+});
+
+
 
     // If no bookings at all, return empty list
     if (!bookings.length) {
@@ -205,3 +238,101 @@ module.exports.getGuestBookings = async (req, res) => {
   }
 };
 
+
+module.exports.getBlockedDates = async (req, res) => {
+  try {
+    const listingId = req.params.listingId;
+
+    // 1. Get total room capacity
+    const listing = await Listing.findById(listingId).select("totalRooms");
+    if (!listing) return res.json([]);
+
+    // 2. Get all approved bookings
+    const bookings = await Booking.find({
+      listingId,
+      status: "APPROVED"
+    });
+
+    if (!bookings.length) return res.json([]);
+
+    // 3. Build per-day booking count
+    const dateRoomMap = {}; 
+    // key = YYYY-MM-DD , value = rooms booked that day
+
+    bookings.forEach(b => {
+      const start = new Date(b.startDate);
+      const end = new Date(b.endDate);
+      let current = new Date(start);
+
+      while (current < end) {
+        const key = current.toISOString().split("T")[0];
+        dateRoomMap[key] = (dateRoomMap[key] || 0) + (b.rooms || 1);
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+    // 4. Extract only fully-booked days
+    const blocked = [];
+
+    Object.entries(dateRoomMap).forEach(([date, roomsBooked]) => {
+      if (roomsBooked >= listing.totalRooms) {
+        blocked.push({
+          startDate: new Date(date),
+          endDate: new Date(date)
+        });
+      }
+    });
+
+    return res.json(blocked);
+
+  } catch {
+    return res.json([]);
+  }
+};
+
+// Return available room count for given range
+module.exports.getAvailableRooms = async (req, res) => {
+  try {
+    const { listingId, startDate, endDate } = req.body;
+    const listing = await Listing.findById(listingId).select("totalRooms");
+
+    const overlapping = await Booking.find({
+      listingId,
+      status: "APPROVED",
+      startDate: { $lt: new Date(endDate) },
+      endDate: { $gt: new Date(startDate) }
+    });
+
+    const roomsBooked = overlapping.reduce((s, b) => s + (b.rooms || 1), 0);
+    const availableRooms = listing.totalRooms - roomsBooked;
+
+    res.json({ availableRooms });
+  } catch {
+    res.json({ availableRooms: 0 });
+  }
+};
+
+
+exports.getBookingDetails = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+
+    const booking = await Booking.findById(bookingId)
+      .populate("listingId", 
+        "title propertyType location images pricePerNight"
+      )
+      .populate("guestId", "name email")
+      .populate("hostId", "name email");
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    console.log(booking);
+    
+    res.status(200).json({ booking });
+
+  } catch (error) {
+    console.error("Error fetching booking details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

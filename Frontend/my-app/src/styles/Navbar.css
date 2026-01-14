@@ -254,3 +254,156 @@ body {
 .create-listing-btn:hover {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+@media (max-width: 768px) {
+  .main-container {
+    padding-top: 10px;
+    padding-bottom: 6px;
+  }
+
+
+  .f-layer {
+    height: auto;
+    padding: 0 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 10px;
+  }
+
+  .logo-section {
+    flex: 1 1 auto;
+    order: 1;
+  }
+
+  .logo {
+    font-size: 19px;
+    letter-spacing: -0.8px;
+  }
+
+  .profile-section {
+    order: 2;
+    flex: 0 0 auto;
+  }
+
+  .profile-pill {
+    padding: 4px 7px;
+    border: 1px solid #eee;
+  }
+
+  .create-listing-btn {
+    display: none;
+  }
+
+  .search-section {
+    order: 3;
+    width: 100%;
+    padding: 0 14px 2px;
+  }
+
+  .searchbox {
+    height: 42px;
+    border-radius: 14px;
+    background: #f7f7f7;
+    border: 1px solid #e3e3e3;
+    box-shadow: none;
+  }
+
+  .searchbox input {
+    font-size: 13px;
+  }
+
+  .searchbutton button {
+    width: 32px;
+    height: 32px;
+  }
+
+
+  .suggestions-dropdown {
+    left: 14px;
+    right: 14px;
+    width: auto;
+    top: calc(100% + 6px);
+    border-radius: 16px;
+    max-height: 260px;
+  }
+
+  .s-layer {
+    margin-top: 4px;
+    padding: 6px 14px 10px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 8px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .s-layer::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-bubble {
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 18px;
+    border: 1px solid #ededed;
+    white-space: nowrap;
+  }
+
+  .nav-bubble.highlight {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .profile-dropdown {
+    right: 0;
+    top: calc(100% + 8px);
+    width: 220px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .f-layer {
+    padding: 0 10px;
+  }
+
+  .search-section {
+    padding: 0 10px 2px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .nav-bubble {
+    padding: 5px 12px;
+    font-size: 11.5px;
+  }
+}
+/* ... existing desktop styles ... */
+
+/* New class for the dropdown link */
+.mobile-only-link {
+  display: none; /* Hidden on laptop by default */
+  font-weight: 600;
+  color: var(--color-primary) !important;
+}
+
+@media (max-width: 768px) {
+  /* ... existing mobile media query styles ... */
+
+  .create-listing-btn {
+    display: none; /* Main button stays hidden on mobile */
+  }
+
+  .mobile-only-link {
+    display: block; /* Show the link inside dropdown on mobile */
+  }
+
+  .profile-dropdown p.mobile-only-link {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+  }
+}

@@ -15,6 +15,8 @@ import Alert from "../components/Alert";
 import { useAuthContext } from "../utils/AuthContext";
 import { trackActivity } from "../api/userActivity.api";
 import ListingMap from "../components/ListingMap";
+import Loader from "../components/Loader";
+import { apiRequest } from "../api/apiClient";
 
 // simple icon map
 const facilityIcons = {
@@ -37,8 +39,23 @@ const facilityIcons = {
 function ListingDetails() {
      const [alertMsg, setAlertMsg] = useState("");
   const { isAuthenticated, loading } = useAuthContext();
-  const { id } = useParams();
+   const { id } = useParams();
   const navigate = useNavigate();
+
+const [blockedDates, setBlockedDates] = useState([]);
+const [availableRooms, setAvailableRooms] = useState(0);
+
+  // ✅ MOVED HERE (only position changed)
+  const [openDate, setOpenDate] = useState(false);
+  const [dateRange, setDateRange] = useState([
+    { startDate: new Date(), endDate: new Date(), key: "selection" }
+  ]);
+
+  const dayCount = Math.round(
+    (dateRange[0].endDate - dateRange[0].startDate) /
+      (1000 * 60 * 60 * 24)
+  );
+  const totalNights = dayCount > 0 ? dayCount : 0;
 
   const [listDetail, setListDetail] = useState({
     title: "",
@@ -56,37 +73,88 @@ function ListingDetails() {
     addonPrices: { breakfast: 0, lunch: 0, dinner: 0 }
   });
 
-  useEffect(() => {
-    const listingDetail = async () => {
-      try {
-        const data = await getListingById(id);
-        if (data) setListDetail(data);
-      } catch {
-        setAlertMsg("Listing fetch failed");
-      }
-    };
-    if (id) listingDetail();
-  }, [id]);
+    // helper fn to block dates
+const disabledDates = blockedDates.flatMap(b => {
+  const dates = [];
+  let current = new Date(b.startDate);
+  const end = new Date(b.endDate);
+  while (current <= end) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+  return dates;
+});
 
-  useEffect(() => {
-    if (loading) return;
-    if (!isAuthenticated) return;
+// Add dynamically blocked dates if selected range has no available rooms
+const dynamicDisabledDates = [...disabledDates];
 
-    const trackViewedListing = async () => {
-      try {
-        await trackActivity({ listingId: id, actionType: "view" });
-      } catch {
-        setAlertMsg("Activity tracking failed");
-      }
-    };
+if (availableRooms === 0 && totalNights > 0) {
+  let current = new Date(dateRange[0].startDate);
+  const end = new Date(dateRange[0].endDate);
 
-    if (id) trackViewedListing();
-  }, [id, isAuthenticated, loading]);
+  while (current <= end) {
+    dynamicDisabledDates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+}
 
-  const [openDate, setOpenDate] = useState(false);
-  const [dateRange, setDateRange] = useState([
-    { startDate: new Date(), endDate: new Date(), key: "selection" }
-  ]);
+
+//fetch blocked dates
+useEffect(() => {
+  const loadBlockedDates = async () => {
+    try {
+      const data = await apiRequest(`/bookings/blocked-dates/${id}`);
+      setBlockedDates(data || []);
+    } catch {
+      setBlockedDates([]);
+    }
+  };
+  if (id) loadBlockedDates();
+}, [id]);
+
+//avaiable rooms
+useEffect(() => {
+  const fetchAvailableRooms = async () => {
+    try {
+      const res = await apiRequest("/bookings/available-rooms", "POST", {
+        listingId: id,
+        startDate: dateRange[0].startDate,
+        endDate: dateRange[0].endDate
+      });
+      setAvailableRooms(res.availableRooms || 0);
+    } catch {
+      setAvailableRooms(0);
+    }
+  };
+  if (id && totalNights > 0) fetchAvailableRooms();
+}, [dateRange, id, totalNights]);
+
+useEffect(() => {
+  const listingDetail = async () => {
+    try {
+      const data = await getListingById(id);
+      if (data) setListDetail(data);
+    } catch {
+      setAlertMsg("Listing fetch failed");
+    }
+  };
+  if (id) listingDetail();
+}, [id]);
+
+useEffect(() => {
+  if (loading) return;
+  if (!isAuthenticated) return;
+
+  const trackViewedListing = async () => {
+    try {
+      await trackActivity({ listingId: id, actionType: "view" });
+    } catch {
+      setAlertMsg("Activity tracking failed");
+    }
+  };
+
+  if (id) trackViewedListing();
+}, [id, isAuthenticated, loading]);
 
   const dateRef = useRef(null);
 
@@ -99,12 +167,6 @@ function ListingDetails() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const dayCount = Math.round(
-    (dateRange[0].endDate - dateRange[0].startDate) /
-      (1000 * 60 * 60 * 24)
-  );
-  const totalNights = dayCount > 0 ? dayCount : 0;
 
   const handleBookNow = () => {
     if(!isAuthenticated){
@@ -132,10 +194,20 @@ function ListingDetails() {
   const handleback=()=>{
     navigate(-1);
   }
+
+  const effectiveNightPrice =
+  listDetail.discountPercentage > 0
+    ? Math.round(
+        listDetail.pricePerNight -
+        (listDetail.pricePerNight * listDetail.discountPercentage) / 100
+      )
+    : listDetail.pricePerNight;
+
   
 
   return (
     <>
+    {loading && <Loader />}
       <Navbar />
           <Alert msg={alertMsg} shut={() => setAlertMsg("")} />
 
@@ -231,8 +303,8 @@ function ListingDetails() {
 
             <div className="map-placeholder">
   <ListingMap 
-    lat={listDetail.location?.lat} 
-    lng={listDetail.location?.lng} 
+    lat={Number(listDetail.location?.lat)} 
+    lng={Number(listDetail.location?.lng)} 
   />
   <span className="text-muted">
     {listDetail.location?.address}
@@ -246,7 +318,8 @@ function ListingDetails() {
 
               <div className="booking-header">
                 <h3>
-                  ₹{listDetail.pricePerNight.toLocaleString()}
+                  ₹{effectiveNightPrice.toLocaleString()}
+
                   <span className="price-unit"> night</span>
                 </h3>
                 <div className="rating-tag">
@@ -282,17 +355,21 @@ function ListingDetails() {
       ranges={dateRange}
       minDate={new Date()}
       rangeColors={["#FF385C"]}
+      disabledDates={dynamicDisabledDates}
     />
   </div>
 )}
 
 {/* ✅ Always visible between dates and Book button */}
 <div className="guest-capacity-row">
-  <span>Max Guests per Room</span>
-  <span>{listDetail.maxGuestsPerRoom || 1}</span>
+  <span>Total Rooms | Available</span>
+  <span>
+    {listDetail.totalRooms || 1} | {availableRooms}
+  </span>
 </div>
 
-{isAuthenticated && (
+
+{isAuthenticated  && availableRooms > 0 && (
   <button className="book-btn" onClick={handleBookNow}>
   Book Now
 </button>
@@ -302,14 +379,12 @@ function ListingDetails() {
                 <div className="price-calc">
                   <div className="row">
                     <span>
-                      ₹{listDetail.pricePerNight.toLocaleString()} x{" "}
-                      {totalNights} nights
+                   ₹{effectiveNightPrice.toLocaleString()} x {totalNights} nights
+
                     </span>
                     <span>
                       ₹
-                      {(
-                        listDetail.pricePerNight * totalNights
-                      ).toLocaleString()}
+                      {(effectiveNightPrice * totalNights).toLocaleString()}
                     </span>
                   </div>
                 </div>

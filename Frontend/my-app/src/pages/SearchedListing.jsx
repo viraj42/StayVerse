@@ -5,6 +5,7 @@ import "../styles/TrendingListings.css";
 import Navbar from "./Navbar";
 import { getSearchListing } from "../api/search.api";
 import {ArrowLeft} from "lucide-react"
+import Loader from "../components/Loader";
 function SearchedListing() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,7 +33,7 @@ function SearchedListing() {
     if (q) fetchListings();
   }, [q]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) <Loader/>;
 
   const handleback=()=>{
     navigate(-1);

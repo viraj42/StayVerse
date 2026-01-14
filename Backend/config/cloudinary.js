@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "StayConnect/Listings",
-    allowed_formats: ["jpg", "jpeg", "png", "avif"],
+    allowed_formats: ["jpg", "jpeg", "png", "avif", "webp"],
   },
 });
 

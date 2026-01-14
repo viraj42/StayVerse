@@ -4,6 +4,7 @@ import Navbar from "../pages/Navbar";
 import "../styles/BookingForm.css";
 import { createBooking } from "../api/booking.api";
 import Alert from "./Alert";   
+
 function BookingForm() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -27,8 +28,22 @@ function BookingForm() {
 
   const nights = bookingData.totalNights;
   const maxGuestsPerRoom = listing.maxGuestsPerRoom || 1;
-  const subtotal = listing.pricePerNight * nights * rooms;
 
+  // -------------------------
+  // PRICE CALCULATION ALIGNED WITH BACKEND
+  // -------------------------
+
+  // Base subtotal (original price)
+  const baseSubtotal = listing.pricePerNight * nights * rooms;
+
+  // Discount
+  const discountPercentage = listing.discountPercentage || 0;
+  const discountAmount = (baseSubtotal * discountPercentage) / 100;
+
+  // Subtotal AFTER discount
+  const discountedSubtotal = baseSubtotal - discountAmount;
+
+  // Add-ons total
   let addonsTotal = 0;
   if (addons.breakfast)
     addonsTotal += listing.addonPrices.breakfast * nights * maxGuestsPerRoom * rooms;
@@ -37,12 +52,15 @@ function BookingForm() {
   if (addons.dinner)
     addonsTotal += listing.addonPrices.dinner * nights * maxGuestsPerRoom * rooms;
 
-  const taxAmount = (subtotal + addonsTotal) * 0.12;
-  const serviceFee = 500;
-  const discountAmount = (subtotal * (listing.discountPercentage || 0)) / 100;
+  // Tax AFTER discount
+  const taxAmount = (discountedSubtotal + addonsTotal) * 0.12;
 
+  // Service fee
+  const serviceFee = 500;
+
+  // Final total
   const totalPrice = Math.round(
-    subtotal + addonsTotal + taxAmount + serviceFee - discountAmount
+    discountedSubtotal + addonsTotal + taxAmount + serviceFee
   );
 
   // -------------------
@@ -74,7 +92,6 @@ function BookingForm() {
     <>
       <Navbar />
 
-      {/* Reusable Alert */}
       <Alert msg={alertMsg} shut={() => setAlertMsg("")} />
 
       <div className="booking-form-container">
@@ -168,7 +185,7 @@ function BookingForm() {
           <div className="price-box">
             <div className="price-row">
               <span>Subtotal</span>
-              <span>₹{subtotal}</span>
+              <span>₹{Math.round(discountedSubtotal)}</span>
             </div>
 
             <div className="price-row">

@@ -23,6 +23,11 @@ const UpdateListing = () => {
     category: "stay",
     propertyType: "apartment",
     maxGuestsPerRoom: 2,
+
+    totalRooms: 1,             // ✅ NEW
+    isHotDeal: false,          // ✅ NEW
+    discountPercentage: 0,     // ✅ NEW
+
     address: "",
     city: "",
     state: "",
@@ -60,6 +65,11 @@ useEffect(() => {
         category: data.category,
         propertyType: data.propertyType,
         maxGuestsPerRoom: data.maxGuestsPerRoom,
+
+        totalRooms: data.totalRooms,                 // ✅ NEW
+        isHotDeal: data.isHotDeal,                   // ✅ NEW
+        discountPercentage: data.discountPercentage, // ✅ NEW
+
         address: data.location.address,
         city: data.location.city,
         state: data.location.state,
@@ -84,8 +94,11 @@ useEffect(() => {
 
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === "checkbox" ? checked : value 
+    }));
   };
 
   const handleFacilityToggle = (facility) => {
@@ -120,6 +133,11 @@ useEffect(() => {
         category: formData.category,
         propertyType: formData.propertyType,
         maxGuestsPerRoom: Number(formData.maxGuestsPerRoom),
+
+        totalRooms: Number(formData.totalRooms),                 // ✅ NEW
+        isHotDeal: formData.isHotDeal,                           // ✅ NEW
+        discountPercentage: Number(formData.discountPercentage), // ✅ NEW
+
         facilities: formData.facilities,
         location: {
           address: formData.address,
@@ -236,6 +254,20 @@ useEffect(() => {
                 />
               </div>
 
+              {/* ✅ NEW FIELD */}
+              <div className="input-group">
+                <label>Total Rooms Available</label>
+                <input
+                  type="number"
+                  name="totalRooms"
+                  className="input-field"
+                  value={formData.totalRooms}
+                  onChange={handleChange}
+                  min="1"
+                  required
+                />
+              </div>
+
             </div>
           </div>
 
@@ -333,6 +365,35 @@ useEffect(() => {
                   required
                 />
               </div>
+
+              {/* ✅ NEW DISCOUNT TOGGLE */}
+              <div className="input-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="isHotDeal"
+                    checked={formData.isHotDeal}
+                    onChange={handleChange}
+                  /> Enable Discount
+                </label>
+              </div>
+
+              {/* ✅ NEW DISCOUNT FIELD */}
+              {formData.isHotDeal && (
+                <div className="input-group">
+                  <label>Discount Percentage (%)</label>
+                  <input
+                    type="number"
+                    name="discountPercentage"
+                    className="input-field"
+                    value={formData.discountPercentage}
+                    onChange={handleChange}
+                    min="0"
+                    max="90"
+                    required
+                  />
+                </div>
+              )}
 
               <div className="input-group">
                 <label>Breakfast Price</label>

@@ -22,6 +22,7 @@ module.exports.createListing = async (req, res) => {
       facilities,
       highlights,
       isHotDeal,
+      totalRooms ,
       discountPercentage,
       dealExpiry,
       addonPrices
@@ -60,6 +61,7 @@ module.exports.createListing = async (req, res) => {
       isHotDeal,
       discountPercentage,
       dealExpiry,
+      totalRooms,
       addonPrices: {
         breakfast: addonPrices?.breakfast || 0,
         lunch: addonPrices?.lunch || 0,
@@ -95,6 +97,7 @@ module.exports.updateListing = async (req, res) => {
       "facilities",
       "highlights",
       "isHotDeal",
+      "totalRooms",
       "discountPercentage",
       "dealExpiry",
       "addonPrices"
@@ -250,22 +253,26 @@ module.exports.getTrendingListings = async (req, res) => {
 
 
 //hot lists
-module.exports.getHotDeals=async(req,res)=>{
+// hot lists
+module.exports.getHotDeals = async (req, res) => {
   try {
-    const listings=await Listing.find({
-      isHotDeal:true,       //hot deal list
-      discountPercentage: { $gt: 0 },
-      dealExpiry:{$gt:Date.now()} //not yet expired
+    const listings = await Listing.find({
+      isHotDeal: true,
+      discountPercentage: { $gt: 0 }
     })
-    .sort({discountPercentage:-1}) //most discount-->first
-    .limit(20)
-    .lean();
+      .sort({ discountPercentage: -1 })
+      .limit(20)
+      .lean();
+
     const cards = listings.map(formatListingCard);
+    console.log(cards);
+    
     return res.status(200).json(cards);
   } catch (error) {
     return res.status(500).json({ error: "Failed to find Hot deals" });
   }
-}
+};
+
 
 //reated lists
 module.exports.getRelatedListings=async(req,res)=>{

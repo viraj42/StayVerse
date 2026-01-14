@@ -1,64 +1,59 @@
-
 :root {
-
   --bg-page: var(--bg-muted);
   --text-main: var(--text-primary);
   --text-sub: var(--text-muted);
-  
-
   --anim-slide-up: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
-
-
 
 .history-page {
   background-color: var(--bg-page);
   min-height: 100vh;
   width: 100%;
-  padding-top: 2rem; /* Space below Navbar */
-  padding-bottom: 4rem;
+  padding-top: 1.5rem; /* Space below Navbar */
+  padding-bottom: 5rem; /* Extra space for mobile bottom nav if used */
 }
 
 .history-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem; /* Slightly tighter padding for mobile */
 }
 
-
+/* --- Header Section --- */
 .history-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
+  align-items: center; /* Changed from flex-end for better mobile balance */
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
 .header-content h1 {
   font-family: var(--font-sans);
-  font-size: 2rem;
+  font-size: 1.75rem; /* Scaled down slightly for better fit */
   font-weight: 700;
   color: var(--text-main);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
   letter-spacing: -0.02em;
 }
 
 .header-content p {
   font-family: var(--font-sans);
   color: var(--text-sub);
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin: 0;
 }
+
 .btn-clear {
   background: transparent;
   border: 1px solid rgba(0,0,0,0.1);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 2rem;
   color: var(--text-sub);
   font-family: var(--font-sans);
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -70,15 +65,16 @@
   background: rgba(255, 56, 92, 0.04);
 }
 
+/* --- List Section --- */
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem; /* Slightly more compact gap */
 }
 
 .history-item-wrapper {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(15px);
   animation: slideUpFade var(--anim-slide-up);
 }
 
@@ -89,12 +85,13 @@
   }
 }
 
+/* --- State Styles --- */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
+  padding: 4rem 1.5rem;
   background: var(--bg-surface);
   border-radius: var(--radius-card);
   border: 1px dashed rgba(0,0,0,0.1);
@@ -102,7 +99,7 @@
 }
 
 .empty-state h3 {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--text-main);
   margin: 1rem 0 0.5rem 0;
@@ -110,13 +107,13 @@
 
 .empty-state p {
   color: var(--text-sub);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .skeleton-card {
   width: 100%;
-  height: 180px;
-  background: #e0e0e0;
+  height: 140px; 
+  background: #eeeeee;
   border-radius: var(--radius-card);
   position: relative;
   overflow: hidden;
@@ -142,13 +139,36 @@
 }
 
 @media (max-width: 640px) {
-  .history-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  .history-page {
+    padding-top: 1rem;
   }
-  
+
+  .history-header {
+    flex-direction: row; 
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-content h1 {
+    font-size: 1.4rem;
+  }
+
+  .header-content p {
+    font-size: 0.8rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .btn-clear {
-    width: 100%;
+    width: auto; 
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+
+  .history-item-wrapper {
+     width: 100%;
   }
 }

@@ -115,8 +115,9 @@ function Navbar() {
 
   return (
     <div className="main-container">
+      
+      
       <div className="f-layer">
-
         <div className="logo-section">
           <p className="logo" onClick={() => navigate("/dashboard")}>StayVerse</p>
         </div>
@@ -155,9 +156,7 @@ function Navbar() {
           )}
         </div>
 
-  
         <div className="profile-section" ref={profileRef}>
-
           {role === "host" && (
             <div 
               className="create-listing-btn" 
@@ -183,6 +182,10 @@ function Navbar() {
               )}
               {role === "host" && (
                 <>
+                  {/* Added this specifically for mobile visibility */}
+                  <p className="mobile-only-link" onClick={() => navigate("/host/listings/new")}>
+                    Create a Listing
+                  </p>
                   <p onClick={() => navigate("/host/profile")}>My Profile</p>
                   <p onClick={() => navigate("/host/bookings")}>Booking Activity</p>
                 </>
@@ -192,7 +195,6 @@ function Navbar() {
             </div>
           )}
         </div>
-
       </div>
 
       <div className="s-layer">

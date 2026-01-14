@@ -27,6 +27,7 @@ import WishlistPage from "./pages/WishlistPage";
 
 import "./index.css";
 import Hero from "./pages/Hero";
+import BookingDetailsPage from "./pages/BookingDetailsPage";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
       <Route path="/signup" element={<SignUp />} />
 
       <Route path="/" element={<Hero />} />
+      <Route path="/listing" element={<SearchedListing />} />
       <Route path="/dashboard" element={<Gdashboard />} />
       <Route path="/trending" element={<TredingListings />} />
       <Route path="/hot" element={<HotDeal />} />
@@ -47,16 +49,9 @@ function App() {
       <Route path="/browse/propType/:types" element={<BrowseByProp />} />
       <Route path="/listing/:id" element={<ListingDetails />} />
       <Route path="/listing/reviews/:listingId" element={<GuestReviewPage />} />
+      <Route path="/booking/details/:bookingId" element={<BookingDetailsPage />} />
 
       {/* ===== GUEST PROTECTED ROUTES ===== */}
-      <Route
-        path="/listing"
-        element={
-          <ProtectedRoute allowedRole="guest">
-            <SearchedListing />
-          </ProtectedRoute>
-        }
-      />
 
       <Route
         path="/book"
@@ -66,7 +61,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/profile"
         element={

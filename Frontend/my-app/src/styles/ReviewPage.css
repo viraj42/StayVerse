@@ -253,3 +253,87 @@
     gap: 16px;
   }
 }
+
+/* --- MOBILE REVIEW OPTIMIZATIONS (Max Width 768px) --- */
+@media (max-width: 768px) {
+  .review-section-main-wrapper {
+    padding: 16px;
+    width: 100%;
+    overflow: hidden; /* Prevent page-level horizontal scroll */
+  }
+
+  /* 1. Header Score Section */
+  .head-score-part {
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .big-number-box {
+    font-size: 18px;
+    padding: 10px 14px;
+  }
+
+  .score-text-detail h2 {
+    font-size: 18px;
+  }
+
+  /* 2. Category Bars (Stacking) */
+  .category-bars-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  /* 3. HORIZONTAL SCROLL FOR REVIEW CARDS */
+  .guest-comments-list {
+    display: flex;             /* Switch from grid to flex row */
+    flex-wrap: nowrap;         /* Force one single line */
+    overflow-x: auto;          /* Enable horizontal swipe */
+    gap: 16px;
+    padding-bottom: 20px;      /* Space for scrollbar/shadows */
+    margin-left: -16px;        /* Pull to screen edge */
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;     /* Hide Firefox scrollbar */
+  }
+
+  .guest-comments-list::-webkit-scrollbar {
+    display: none;             /* Hide Chrome/Safari scrollbar */
+  }
+
+  .comment-card-box {
+    flex: 0 0 280px;           /* Fixed width for swipable cards */
+    scroll-snap-align: start;
+    min-height: 180px;         /* Uniform height for cleaner look */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  /* 4. Review Form Adjustments */
+  .rating-inputs-grid {
+    grid-template-columns: 1fr; /* Stack select inputs */
+    gap: 10px;
+  }
+
+  .input-group-item {
+    padding: 6px 12px;
+  }
+
+  .write-review-area {
+    margin-top: 30px;
+  }
+
+  .submit-btn-solid {
+    width: 100%; /* Full width for easy thumb tap */
+  }
+}
+
+/* Extra small screens fix */
+@media (max-width: 320px) {
+  .comment-card-box {
+    flex: 0 0 240px;
+  }
+}

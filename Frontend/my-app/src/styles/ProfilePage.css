@@ -10,15 +10,22 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
 }
 
+/* Base resets to prevent overflow */
+* {
+  box-sizing: border-box;
+}
+
 .profile-page-wrapper {
   background-color: var(--bg-surface);
   min-height: 100vh;
   padding: 40px;
+  width: 100%;
 }
 
 .dashboard-container {
   max-width: 1100px;
   margin: auto;
+  width: 100%;
 }
 
 .dashboard-section {
@@ -30,6 +37,7 @@
   font-weight: 700;
   margin-bottom: 6px;
 }
+
 .section-subtitle {
   font-size: 14px;
   color: var(--text-muted);
@@ -44,9 +52,12 @@
   padding-bottom: 32px;
   border-bottom: 1px solid var(--border-light);
 }
+
 .avatar-section {
   position: relative;
+  flex-shrink: 0;
 }
+
 .avatar-wrapper {
   width: 120px;
   height: 120px;
@@ -62,9 +73,6 @@
   object-fit: cover;
 }
 
-
-
-
 .avatar-upload-btn {
   position: absolute;
   bottom: 4px;
@@ -78,11 +86,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
+
 .user-meta h1 {
   font-size: 32px;
   font-weight: 800;
   margin: 0 0 6px 0;
+  word-wrap: break-word;
 }
 
 .role-badge {
@@ -97,12 +108,37 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
   gap: 48px;
 }
 
-.profile-sidebar {
-  height: fit-content;
+.stat-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  border: 1px solid var(--border-light);
+  padding: 20px;
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--color-primary);
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
 .form-group {
@@ -121,62 +157,96 @@
   padding: 12px;
   border: 1px solid var(--border-light);
   border-radius: 8px;
+  font-size: 16px;
+  background: var(--bg-muted);
 }
 
 .btn-primary {
   background-color: var(--color-primary);
   color: white;
-  padding: 12px 20px;
+  padding: 12px 24px;
   border-radius: 8px;
   border: none;
+  font-weight: 600;
   cursor: pointer;
-}
-.stat-card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-  gap: 20px;
+  width: fit-content;
 }
 
-.stat-card {
-  border: 1px solid var(--border-light);
-  padding: 20px;
-  border-radius: var(--radius-card);
-}
-
-.stat-value {
-  font-size: 26px;
-  font-weight: 700;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-
-.info-sidebar {
-  background: var(--bg-muted);
-  padding: 22px;
-  border-radius: var(--radius-card);
-}
-
-.info-item {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.info-text p {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
+/* --- MOBILE & ULTRA-NARROW OPTIMIZATIONS --- */
 @media (max-width: 768px) {
-  .profile-grid {
-    grid-template-columns: 1fr;
+  .profile-page-wrapper {
+    padding: 24px 16px 100px 16px;
   }
+
   .profile-header {
     flex-direction: column;
     text-align: center;
+    gap: 20px;
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .user-meta h1 {
+    font-size: 26px;
+  }
+
+  .stat-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+}
+
+/* Special fix for 300px - 360px viewports (image_e22e2d.png / image_e2320a.png) */
+@media (max-width: 400px) {
+  .profile-page-wrapper {
+    padding: 16px 12px 80px 12px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .user-meta h1 {
+    font-size: 22px;
+  }
+
+  .avatar-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  /* Compact Host/Guest Dashboard Stats */
+  .stat-card {
+    padding: 12px 10px;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+  .stat-card svg {
+    flex-shrink: 0;
+    width: 18px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    order: 2; /* Move label after the value */
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    order: 1;
+    margin-left: auto;
+    flex-shrink: 0;
   }
 }

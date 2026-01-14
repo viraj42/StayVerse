@@ -21,4 +21,11 @@ router.patch("/:bookingId", requireAuth, requireRole("host"), bookingController.
 // Guest cancel booking
 router.delete("/cancel/:bookingId", requireAuth, requireRole("guest"), bookingController.cancelBooking);
 
+router.get("/details/:bookingId", bookingController.getBookingDetails);
+
+router.post("/check-availability", bookingController.checkBookingAvailability);
+router.get("/blocked-dates/:listingId", bookingController.getBlockedDates);
+router.post("/available-rooms", bookingController.getAvailableRooms);
+
+
 module.exports = router;

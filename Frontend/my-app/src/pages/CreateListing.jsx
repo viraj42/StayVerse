@@ -21,6 +21,11 @@ const CreateListing = () => {
     category: "stay",
     propertyType: "apartment",
     maxGuestsPerRoom: 2,
+
+    totalRooms: 1,              // ✅ NEW
+    isHotDeal: false,           // ✅ NEW
+    discountPercentage: 0,      // ✅ NEW
+
     address: "",
     city: "",
     state: "",
@@ -48,8 +53,11 @@ const CreateListing = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === "checkbox" ? checked : value 
+    }));
   };
 
   const handleFacilityToggle = (facility) => {
@@ -87,6 +95,11 @@ const CreateListing = () => {
       category: formData.category,
       propertyType: formData.propertyType,
       maxGuestsPerRoom: Number(formData.maxGuestsPerRoom),
+
+      totalRooms: Number(formData.totalRooms),                 // ✅ NEW
+      isHotDeal: formData.isHotDeal,                           // ✅ NEW
+      discountPercentage: Number(formData.discountPercentage), // ✅ NEW
+
       facilities: formData.facilities,
       location: {
         address: formData.address,
@@ -191,8 +204,24 @@ const CreateListing = () => {
                   onChange={handleChange}
                 />
               </div>
+
+              {/* ✅ NEW FIELD: TOTAL ROOMS */}
+              <div className="input-group">
+                <label>Total Rooms Available</label>
+                <input 
+                  type="number" 
+                  name="totalRooms" 
+                  className="input-field" 
+                  min="1" 
+                  value={formData.totalRooms} 
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
             </div>
           </div>
+
           <div className="form-section">
             <h3 className="section-title">Location</h3>
             <div className="input-grid">
@@ -293,6 +322,35 @@ const CreateListing = () => {
                 />
               </div>
 
+              {/* ✅ NEW: DISCOUNT TOGGLE */}
+              <div className="input-group">
+                <label>
+                  <input 
+                    type="checkbox"
+                    name="isHotDeal"
+                    checked={formData.isHotDeal}
+                    onChange={handleChange}
+                  /> Enable Discount
+                </label>
+              </div>
+
+              {/* ✅ NEW: DISCOUNT PERCENTAGE */}
+              {formData.isHotDeal && (
+                <div className="input-group">
+                  <label>Discount Percentage (%)</label>
+                  <input 
+                    type="number"
+                    name="discountPercentage"
+                    className="input-field"
+                    min="0"
+                    max="90"
+                    value={formData.discountPercentage}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              )}
+
               <div className="input-group">
                 <label>Breakfast Price (Optional)</label>
                 <input type="number" name="breakfastPrice" className="input-field" value={formData.breakfastPrice} onChange={handleChange} />
@@ -307,6 +365,7 @@ const CreateListing = () => {
               </div>
             </div>
           </div>
+
           <div className="form-section">
             <h3 className="section-title">Facilities & Amenities</h3>
             <div className="facilities-grid">
@@ -350,6 +409,7 @@ const CreateListing = () => {
               </div>
             )}
           </div>
+
           <div className="form-actions">
             <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? 'Creating Listing...' : 'Publish Listing'}

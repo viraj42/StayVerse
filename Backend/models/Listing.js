@@ -43,6 +43,11 @@ const listingSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    totalRooms: {
+  type: Number,
+  required: true,
+  default: 1
+},
 
     images: {
       type: [String],

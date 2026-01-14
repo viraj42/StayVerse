@@ -36,17 +36,18 @@ const Hero = () => {
             </p>
             
             <div className="hero-buttons">
-              {role=="guest" && (
-                <Link to="/dashboard" className="btn btn-large">Visit Website</Link>
-              )}
-              {role=="host" &&(
-                <Link to="/host/dashboard" className="btn btn-large">Visit Website</Link>
-              )}
-              {!isAuthenticated && <Link to="/dashboard" className="btn btn-large">Visit Website</Link>}
-              <div className="tech-stack-label">
-                <small>Built with MongoDB, Express, React, Node</small>
-              </div>
-            </div>
+  <Link
+    to={role === "host" ? "/host/dashboard" : "/dashboard"}
+    className="btn btn-large"
+  >
+    Visit Website
+  </Link>
+
+  <div className="tech-stack-label">
+    <small>Built with MongoDB, Express, React, Node</small>
+  </div>
+</div>
+
           </div>
           <div className="hero-visual">
             <div className="listing-card-mockup">

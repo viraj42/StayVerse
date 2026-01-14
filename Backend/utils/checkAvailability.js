@@ -1,13 +1,20 @@
-const Booking=require('../models/Booking')
+const Booking = require("../models/Booking");
+const Listing = require("../models/Listing");
 
-module.exports.isListingAvailable=async(listingId,startDate,endDate)=>{
-    //First → APPROVED and Second:On approval attempt → conflict
-    const conflictBook=await Booking.findOne({
-        listingId,
-        status:"APPROVED",
-        startDate: { $lt: endDate },
-        endDate: { $gt: startDate },
-    })
+module.exports.isListingAvailable = async (listingId, startDate, endDate, roomsRequested = 1) => {
 
-    return !conflictBook;
+  // Fetch listing capacity
+  const listing = await Listing.findById(listingId).select("totalRooms");
+  if (!listing) return false;
+  const overlapping = await Booking.find({
+    listingId,
+    status: "APPROVED",
+    startDate: { $lt: new Date(endDate) },
+    endDate: { $gt: new Date(startDate) }
+  });
+  const roomsAlreadyBooked = overlapping.reduce(
+    (sum, b) => sum + (b.rooms || 1),
+    0
+  );
+  return (roomsAlreadyBooked + roomsRequested) <= listing.totalRooms;
 };

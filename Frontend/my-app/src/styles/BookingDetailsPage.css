@@ -1,0 +1,21 @@
+.booking-details-page {
+  min-height: 100vh;
+  background: var(--bg-main);
+  padding: 24px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.booking-details-container {
+  width: 100%;
+  max-width: 720px;
+}
+
+/* Loader center alignment */
+.booking-details-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}

@@ -11,7 +11,7 @@ function GuestBooking() {
   const { isAuthenticated, loading: authLoading } = useAuthContext();
   const [guestBookings, setGuestBookings] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
-   const [alertMsg, setAlertMsg] = useState("");
+  const [alertMsg, setAlertMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,25 +34,21 @@ function GuestBooking() {
   }, [isAuthenticated, authLoading]);
 
   // Cancel booking → remove from UI
-const handleCancel = async (e, bookingId) => {
-  e.stopPropagation();
+  const handleCancel = async (e, bookingId) => {
+    e.stopPropagation();
 
-  if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
 
-  try {
-    await cancelGuestBooking(bookingId);
+    try {
+      await cancelGuestBooking(bookingId);
 
-    setGuestBookings(prev =>
-      prev.filter(b => b._id !== bookingId)
-    );
-  } catch (err) {
-    console.error("Cancel failed:", err);
-    setAlertMsg("Could not cancel booking");
-  }
-};
-
-  const handleCardClick = (bookingId) => {
-    navigate(`/listing/${bookingId}`);
+      setGuestBookings(prev =>
+        prev.filter(b => b._id !== bookingId)
+      );
+    } catch (err) {
+      console.error("Cancel failed:", err);
+      setAlertMsg("Could not cancel booking");
+    }
   };
 
   const renderStatusBadge = (status) => {
@@ -80,7 +76,7 @@ const handleCancel = async (e, bookingId) => {
   return (
     <div className="history-page">
       <Navbar />
-          <Alert msg={alertMsg} shut={() => setAlertMsg("")} />
+      <Alert msg={alertMsg} shut={() => setAlertMsg("")} />
 
       <div className="history-container">
 
@@ -102,65 +98,81 @@ const handleCancel = async (e, bookingId) => {
           )}
                 
           {!dataLoading && guestBookings.length > 0 && (
-            guestBookings.map((item, index) => (
-              <div
-                key={item._id || index}
-                className="history-item-wrapper"
-                style={{ animationDelay: `${index * 100}ms` }}
-                onClick={() => handleCardClick(item.listingId._id)}
-              >
-                <div className="listing-card-inner">
+            guestBookings.map((item, index) => {
 
-                  <div className="card-image-box">
-                    <img
-                      src={item.listingImage || "/placeholder.jpg"}
-                      alt={item.listingTitle}
-                      className="card-img"
-                    />
-                    {renderStatusBadge(item.status)}
-                  </div>
+              const basePrice = item.listingId.pricePerNight;
+              const discount = item.listingId.discountPercentage || 0;
+              const discountedPrice = Math.round(
+                basePrice - (basePrice * discount) / 100
+              );
 
-                  <div className="card-details">
-                    <h3 className="card-title">{item.listingTitle}</h3>
+              return (
+                <div
+                  key={item._id || index}
+                  className="history-item-wrapper"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                  onClick={() => navigate(`/booking/details/${item._id}`)}
+                >
+                  <div className="listing-card-inner">
 
-                    <div className="card-meta-row">
-                      <MapPin size={14} className="meta-icon" />
-                      <span>
-                        {item.listingLocation
-                          ? `${item.listingLocation.city}, ${item.listingLocation.state}`
-                          : "Location unavailable"}
-                      </span>
+                    <div className="card-image-box">
+                      <img
+                        src={item.listingImage || "/placeholder.jpg"}
+                        alt={item.listingTitle}
+                        className="card-img"
+                      />
+                      {renderStatusBadge(item.status)}
                     </div>
 
-                    <div className="card-meta-row">
-                      <Calendar size={14} className="meta-icon" />
-                      <span>
-                        {new Date(item.startDate).toLocaleDateString()} →{" "}
-                        {new Date(item.endDate).toLocaleDateString()}
-                      </span>
+                    <div className="card-details">
+                      <h3 className="card-title">{item.listingTitle}</h3>
+
+                      <div className="card-meta-row">
+                        <MapPin size={14} className="meta-icon" />
+                        <span>
+                          {item.listingLocation
+                            ? `${item.listingLocation.city}, ${item.listingLocation.state}`
+                            : "Location unavailable"}
+                        </span>
+                      </div>
+
+                      <div className="card-meta-row">
+                        <Calendar size={14} className="meta-icon" />
+                        <span>
+                          {new Date(item.startDate).toLocaleDateString()} →{" "}
+                          {new Date(item.endDate).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      <div className="card-price-row">
+                        <span className="price-final">₹ {item.totalAmount}</span>
+                        <span className="price-unit"> total</span>
+                      </div>
+
+                      {discount > 0 && (
+                        <div style={{ fontSize: "12px", color: "#888" }}>
+                          ₹ {discountedPrice} / night after {discount}% off
+                        </div>
+                      )}
+
                     </div>
 
-                    <div className="card-price-row">
-                      <span className="price-final">₹ {item.totalAmount}</span>
-                      <span className="price-unit"> total</span>
+                    <div className="card-actions">
+                      {item.status === "PENDING" && (
+                        <button
+                          className="action-btn delete"
+                          onClick={(e) => handleCancel(e, item._id)}
+                          title="Cancel Booking"
+                        >
+                          <XCircle size={18} />
+                        </button>
+                      )}
                     </div>
-                  </div>
 
-                  <div className="card-actions">
-                    {(item.status === "PENDING" || !item.status === "APPROVED") && (
-                      <button
-                        className="action-btn delete"
-                        onClick={(e) => handleCancel(e, item._id)}
-                        title="Cancel Booking"
-                      >
-                        <XCircle size={18} />
-                      </button>
-                    )}
                   </div>
-
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
 
           {!dataLoading && guestBookings.length === 0 && (

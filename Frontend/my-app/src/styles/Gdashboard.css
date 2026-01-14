@@ -256,3 +256,87 @@
   opacity: 1;
   pointer-events: auto;
 }
+
+/* --- MOBILE OPTIMIZATIONS (Max Width 600px) --- */
+@media (max-width: 640px) {
+  .dashboard-container {
+    width: 100%; /* Use full width on very small screens */
+    padding: 16px 12px 60px 12px;
+    box-sizing: border-box;
+  }
+
+  .section-title {
+    font-size: 20px; /* Slightly smaller for mobile */
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+
+  .dashboard-section {
+    margin-bottom: 32px; /* Tighter spacing between sections */
+  }
+
+  /* Hide scroll arrows on mobile as they interfere with touch swiping */
+  .scroll-arrow {
+    display: none !important;
+  }
+
+  /* Adjust card widths to "peek" the next card (shows there is more to scroll) */
+  .feed-card-wrapper,
+  .trending-card-wrapper {
+    flex: 0 0 85%; /* Shows 85% of current card + gap + start of next */
+    max-width: 300px;
+  }
+
+  .type-card {
+    flex: 0 0 160px; /* Smaller cards for property types */
+  }
+
+  .location-scroll-container {
+    gap: 12px;
+  }
+
+  .location-grid {
+    display: flex; /* Force flex for horizontal swipe */
+    gap: 12px;
+    padding: 0 4px;
+  }
+
+  .location-card {
+    flex: 0 0 75%; /* Sized for readability */
+    height: 180px; /* Shorter height for mobile screens */
+  }
+
+  /* Ensure overlays and text remain clear on small screens */
+  .location-name {
+    font-size: 16px;
+  }
+
+  .location-overlay {
+    padding: 12px;
+  }
+
+  /* Fix for horizontal containers to ensure they don't clip shadows */
+  .horizontal-scroll-container, 
+  .feed-scroll-container,
+  .location-scroll-container {
+    padding-left: 4px;
+    padding-right: 4px;
+    gap: 12px;
+  }
+}
+
+/* --- ACCESSIBILITY: Disable smooth wheel logic on touch devices --- */
+@media (hover: none) and (pointer: coarse) {
+  /* This targets touch screens to let native momentum scrolling take over */
+  .horizontal-scroll-container,
+  .feed-scroll-container,
+  .location-scroll-container {
+    scroll-snap-type: x proximity;
+  }
+}

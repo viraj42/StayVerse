@@ -22,6 +22,8 @@ function SearchHistory() {
       setDataLoading(true);
       try {
         const data = await getRecentActivity();
+        console.log(data);
+        
         setHistory(data || []);
       } catch (error) {
         console.error("Failed to load history", error);
@@ -35,11 +37,29 @@ function SearchHistory() {
   }, [isAuthenticated, authLoading]);
 
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Visited recently";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }).format(date);
-  };
+const formatDate = (dateString) => {
+  if (!dateString) return "Visited recently";
+  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} min ago`;
+  if (diffHours < 24) return `${diffHours} hours ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+
+  // Fallback to formatted date for older visits
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }).format(date);
+};
 
 
   const handleCardClick = (listingId) => {
@@ -110,10 +130,10 @@ function SearchHistory() {
                       <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                          {item.listingId.location.city}, {item.listingId.location.state} 
                          <span style={{ opacity: 0.3 }}>|</span> 
-                         <Clock size={14} /> {formatDate(item.createdAt)}
+                         <Clock size={14} /> {formatDate(item.timestamp)}
                       </span>
                     }
-                    image={item.listingId.images?.[0] || "https://via.placeholder.com/600x400?text=No+Image"}
+                    image={item.listingId.images?.[0]}
                     icon={<MapPin size={24} />}
                     accent={currentAccent}
                     onClick={() => handleCardClick(item.listingId._id)}

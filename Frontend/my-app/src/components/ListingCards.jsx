@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/ListingCards.css";
 import WishButton from "./WishButton";  
 
-
 const ListingCards = ({
   _id,               
   image,
@@ -19,8 +18,6 @@ const ListingCards = ({
   return (
     <div className="property-card">
       <div className="card-image-container">
-
-        {/* Wishlist Button */}
         <div
           className="wishlist-btn"
           onClick={(e) => e.stopPropagation()}
@@ -36,7 +33,6 @@ const ListingCards = ({
         />
       </div>
       <div className="card-content">
-
         <div className="card-header">
           <h3 className="card-title">{title}</h3>
           <p className="card-location">{location}</p>
@@ -44,7 +40,6 @@ const ListingCards = ({
         {(rating > 0 || reviewCount > 0) && (
           <div className="rating-row">
             {rating > 0 && <div className="rating-box">{rating}</div>}
-
             <div className="rating-text">
               {ratingLabel && <span className="rating-label">{ratingLabel}</span>}
               {reviewCount > 0 && (
@@ -66,7 +61,6 @@ const ListingCards = ({
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

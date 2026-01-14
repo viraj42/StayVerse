@@ -162,3 +162,176 @@
     justify-content: flex-end;
   }
 }
+
+/* Replaces the FeatureCard internals */
+.listing-card-inner {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  gap: 1.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.05);
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding doesn't cause overflow */
+}
+
+.listing-card-inner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+}
+
+/* Image Section */
+.card-image-box {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Details Section - Critical for handling long content */
+.card-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0; /* Allows children to shrink and truncate properly */
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #222;
+  /* Truncate long titles */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: #666;
+}
+
+.card-meta-row span {
+  /* Truncate long addresses */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.meta-icon {
+  flex-shrink: 0; /* Prevents icon from squishing when text is long */
+  color: #777;
+}
+
+.meta-icon.star {
+  color: #ffb900;
+  fill: #ffb900;
+}
+
+.card-price-row {
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.price-final {
+  font-weight: 700;
+  color: #222;
+  font-size: 1rem;
+}
+
+.price-unit {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Actions Section */
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f3f3f3;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* --- MOBILE & ULTRA-NARROW OPTIMIZATIONS --- */
+@media (max-width: 600px) {
+  .listing-card-inner {
+    flex-direction: column;
+    align-items: stretch; /* Stretch to full width */
+    gap: 0.8rem;
+    padding: 12px;
+  }
+  
+  .card-image-box {
+    width: 100%;
+    height: 140px; /* Reduced slightly for compactness */
+  }
+
+  .card-details {
+    width: 100%;
+  }
+
+  .card-actions {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 0.8rem;
+    padding-left: 0;
+    justify-content: space-between; /* Buttons spread out on mobile */
+  }
+
+  /* Allow two lines of title on mobile before ellipsis */
+  .card-title {
+    white-space: normal;
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Fix for very narrow screens (300px) */
+@media (max-width: 350px) {
+  .card-meta-row span {
+    font-size: 0.8rem;
+  }
+  
+  .price-final {
+    font-size: 0.9rem;
+  }
+}

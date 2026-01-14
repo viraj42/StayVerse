@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ListingCards from "../components/ListingCards";
 import "../styles/Gdashboard.css";
+import Loader from "../components/Loader";
+
 import {
   getHomeFeed,
   getPersonalizedTrending,
@@ -13,7 +15,7 @@ import { useAuthContext } from "../utils/AuthContext";
 import Navbar from "../pages/Navbar";
 
 const GDashboard = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuthContext();
 
   const [homeFeed, setHomeFeed] = useState([]);
@@ -22,6 +24,14 @@ const GDashboard = () => {
   const [locationType, setLocationType] = useState([]);
   const [ratedList, setRatedList] = useState([]);
   const [trendingDest, setTrendingDest] = useState([]);
+
+  // ✅ ADDED loader tracking states
+  const [pageLoad, setPageLoad] = useState(true);
+  const [loadCount, setLoadCount] = useState(0);
+
+  const markLoaded = () => {
+    setLoadCount((prev) => prev + 1);
+  };
 
   const feedRef = useRef(null);
   const trendingRef = useRef(null);
@@ -40,6 +50,8 @@ const GDashboard = () => {
         setTrendingDest(data);
       } catch (error) {
         setTrendingDest([]);
+      } finally {
+        markLoaded(); // ✅ added
       }
     };
     loadDest();
@@ -56,6 +68,8 @@ const GDashboard = () => {
         setRatedList(data);
       } catch (error) {
         setRatedList([]);
+      } finally {
+        markLoaded(); // ✅ added
       }
     };
     loadRatedList();
@@ -65,6 +79,7 @@ const GDashboard = () => {
     const loadTypes = async () => {
       const data = await apiRequest("/meta/location-city");
       setLocationType(data || []);
+      markLoaded(); // ✅ added
     };
     loadTypes();
   }, []);
@@ -73,6 +88,7 @@ const GDashboard = () => {
     if (loading) return;
     if (!isAuthenticated) {
       setHomeFeed([]);
+      markLoaded(); // ✅ added
       return;
     }
     const loadFeed = async () => {
@@ -81,19 +97,26 @@ const GDashboard = () => {
         setHomeFeed(data || []);
       } catch {
         setHomeFeed([]);
+      } finally {
+        markLoaded(); // ✅ added
       }
     };
     loadFeed();
   }, [isAuthenticated, loading]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      markLoaded(); // ✅ added
+      return;
+    }
     const loadTrending = async () => {
       try {
         const data = await getPersonalizedTrending();
         setTrending(data || []);
       } catch {
         setTrending([]);
+      } finally {
+        markLoaded(); // ✅ added
       }
     };
     loadTrending();
@@ -103,6 +126,7 @@ const GDashboard = () => {
     const loadTypes = async () => {
       const data = await apiRequest("/meta/property-types");
       setPropertyTypes(data || []);
+      markLoaded(); // ✅ added
     };
     loadTypes();
   }, []);
@@ -137,9 +161,19 @@ const GDashboard = () => {
       attachWheel(ratingRef),
       attachWheel(trendingDestRef)
     ];
-
+    
     return () => cleanups.forEach((fn) => fn && fn());
   }, []);
+
+  // ✅ stop page loader when all feeds finished
+  useEffect(() => {
+    if (loadCount >= 6) {
+      setPageLoad(false);
+    }
+  }, [loadCount]);
+
+  // ✅ final loader flag
+  const showLoader = loading || pageLoad;
 
   const scrollLeft = (ref) => {
     if (ref.current) {
@@ -153,8 +187,10 @@ const GDashboard = () => {
     }
   };
 
+
   return (
     <>
+    {showLoader  && <Loader />}
       <Navbar />
       <div className="dashboard-container">
         {homeFeed.length > 0 && (
@@ -162,7 +198,6 @@ const GDashboard = () => {
             <h2 className="section-title">
               {isAuthenticated ? "Recommended for You" : "Popular Stays"}
             </h2>
-
             <div className="scroll-wrapper">
               <button className="scroll-arrow left" onClick={() => scrollLeft(feedRef)}>‹</button>
 
@@ -187,9 +222,6 @@ const GDashboard = () => {
         {isAuthenticated && trending.length > 0 && (
           <section className="dashboard-section">
             <h2 className="section-title">Trending for You</h2>
-            <p className="section-subtitle">
-              Travelers searching for India also booked these
-            </p>
 
             <div className="scroll-wrapper">
               <button className="scroll-arrow left" onClick={() => scrollLeft(trendingRef)}>‹</button>
@@ -214,9 +246,6 @@ const GDashboard = () => {
 
         <section className="dashboard-section">
           <h2 className="section-title">Explore by Location</h2>
-          <p className="section-subtitle">
-            Travelers searching for India also booked these
-          </p>
 
           <div className="scroll-wrapper">
             <button className="scroll-arrow left" onClick={() => scrollLeft(locationRef)}>‹</button>
@@ -301,9 +330,6 @@ const GDashboard = () => {
         {trendingDest.length > 0 && (
           <section className="dashboard-section">
             <h2 className="section-title">Trending Destinations</h2>
-            <p className="section-subtitle">
-              Travelers searching more about these Destinations!!
-            </p>
 
             <div className="scroll-wrapper">
               <button className="scroll-arrow left" onClick={() => scrollLeft(trendingDestRef)}>‹</button>

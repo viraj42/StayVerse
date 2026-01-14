@@ -88,9 +88,7 @@ const ProfilePage = () => {
   const renderHostStats = () => (
     <div className="dashboard-section">
       <h2 className="section-title">Hosting Dashboard</h2>
-      <p className="section-subtitle">Manage your properties and earnings.</p>
-
-      <div className="stat-card-container">
+        <div className="stat-card-container">
         <div className="stat-card">
           <Home size={20} />
           <span className="stat-value">{dashboard?.listingsCount || 0}</span>
@@ -115,8 +113,6 @@ const ProfilePage = () => {
   const renderGuestStats = () => (
     <div className="dashboard-section">
       <h2 className="section-title">Your Trips</h2>
-      <p className="section-subtitle">Travel summary.</p>
-
       <div className="stat-card-container">
         <div className="stat-card">
           <MapPin size={20} />
