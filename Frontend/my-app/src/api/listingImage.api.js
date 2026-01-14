@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL + "/api";
+
 
 export const uploadListingImages = async (listingId, images) => {
   const token = localStorage.getItem("token");
