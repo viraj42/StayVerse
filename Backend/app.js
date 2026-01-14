@@ -36,7 +36,8 @@ app.use("/api/meta", metaRoutes);
 app.use("/api/profile",profileRoutes);
 app.use("/api/host",hostDashboardRoute);
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT;
+
 app.listen(PORT, () => {
-    console.log("Server is Listening at Port", PORT);
+  console.log(`Server is listening on port ${PORT}`);
 });
