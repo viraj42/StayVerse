@@ -35,6 +35,8 @@ app.use("/api/search", searchRoutes);
 app.use("/api/meta", metaRoutes);
 app.use("/api/profile",profileRoutes);
 app.use("/api/host",hostDashboardRoute);
-app.listen(process.env.PORT,()=>{
-    console.log("Server is Listening at Port ",process.env.PORT); 
-})
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log("Server is Listening at Port", PORT);
+});
