@@ -1,7 +1,13 @@
 # StayVerse — Personalized Stay & Experience Booking Platform
 
-🏡 **Live Demo:** [Add your deployed frontend URL here]  
-⚙️ **Backend API:** [Add your backend deployment URL here]
+🏡 **Live Demo:** --> https://stay-verse.vercel.app/  
+
+**Demo Guest Profile** :
+ --email : demo.guest123@gmail.com
+ --password : Guest@123
+**Demo Host Profile**
+--email : demo.host123@gmail.com
+--password : Host@123
 
 StayVerse is a full-stack **MERN-based marketplace platform** enabling users to discover, book, and manage personalized stays and experiences.  
 The system implements a **request–approval booking workflow**, **deterministic rule-based personalization**, and a **scalable backend architecture**, while remaining fully explainable and implementable by a single developer.
