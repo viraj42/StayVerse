@@ -12,7 +12,8 @@ const Hero = () => {
       <nav className="navbar">
         <div className="nav-container">
           <Link to="/" className="logo">
-            StayVerse<span className="dot">.</span>
+          <img src="/image.png" alt="StayVerse Logo" />
+            StayVerse<span className="dot"></span>
           </Link>
           <div className="nav-actions">
             <Link to="/login" className="btn btn-secondary">Log in</Link>

@@ -335,3 +335,14 @@ h1 .highlight {
     bottom: -20px;
   }
 }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
