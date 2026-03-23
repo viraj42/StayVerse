@@ -5,3 +5,6 @@ export const getHomeFeed = () =>
 
 export const getPersonalizedTrending = () =>
   apiRequest("/my/trending", "GET", null, true);
+
+export const getAIReviewSummary = (listingId) =>
+  apiRequest(`/ai/summary/${listingId}`, "GET", null, true);

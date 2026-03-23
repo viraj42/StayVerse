@@ -194,13 +194,10 @@
   gap: 10px;
 }
 
-.listing-details-right {
-  position: relative;
-}
 
 .booking-card {
-  position: sticky;
-  top: 120px;
+  position: relative;
+  top: 10px;
   border: 1px solid #dddddd;
   border-radius: var(--radius-card);
   padding: 24px;
@@ -300,26 +297,8 @@
   transform: scale(0.98);
 }
 
-.widget-popup {
-  position: absolute;
-  top: 100%; 
-  left: 0;
-  width: 100%; 
-  background: var(--bg-surface);
-  border: 1px solid #dddddd;
-  border-radius: 12px;
-  z-index: 50;
-  box-shadow: var(--shadow-dropdown);
-  padding: 16px;
-  margin-top: 8px; 
-}
 
 
-.date-popup {
-    width: 330px; 
-    right: 0;
-    left: auto;
-}
 
 .rdrCalendarWrapper {
     font-size: 12px;
@@ -495,18 +474,7 @@
     font-size: 18px;
   }
 
-  .date-popup {
-    width: 100vw;
-    max-width: 100%;
-    left: 0;
-    right: 0;
-    position: fixed; 
-    top: auto;
-    bottom: 0;
-    border-radius: 20px 20px 0 0;
-    margin-top: 0;
-    padding-bottom: 30px;
-  }
+
 
   /* 2. Optimized Image Carousel for Mobile */
   .image-grid-section {
@@ -580,3 +548,229 @@
   }
 }
 
+
+.listing-container {
+  position: relative;
+  z-index: 1;
+}
+.listing-review-section {
+  position: relative;
+  z-index: 0;
+}
+.widget-popup {
+  z-index: 10000;
+}
+.widget-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 320px;   /* ✅ LIMIT HEIGHT */
+  overflow-y: auto;    /* ✅ ENABLE SCROLL */
+  background: var(--bg-surface);
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  z-index: 9999;
+  box-shadow: var(--shadow-dropdown);
+  padding: 12px;
+}
+
+.rdrCalendarWrapper {
+  font-size: 11px;
+}
+
+.rdrMonth {
+  padding: 0 8px;
+}
+
+.rdrWeekDays {
+  margin-bottom: 4px;
+}
+
+.rdrDays {
+  row-gap: 2px;
+}
+
+.rdrDay {
+  height: 32px;
+}
+
+.ai-review-card {
+  border: 1px solid #dddddd;
+  border-radius: var(--radius-card);
+  padding: 20px;
+  margin-bottom: 20px;
+  background: var(--bg-surface);   /* ✅ WHITE CARD BACK */
+  box-shadow: var(--shadow-subtle);
+}
+
+/* Title */
+.ai-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Main headline */
+.ai-headline {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* Summary text */
+.ai-summary {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+/* Section wrapper */
+.ai-section {
+  margin-top: 14px;
+}
+
+/* Sub-headings (less bold) */
+.ai-section strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* List styling */
+.ai-section ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.ai-section li {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   CALENDAR CORE
+========================= */
+.widget-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  z-index: 9999;
+  box-shadow: var(--shadow-dropdown);
+  padding: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+.date-popup {
+  width: 330px;
+  left: 0;
+}
+
+/* =========================
+   MOBILE FIX (REAL FIX)
+========================= */
+@media (max-width: 768px) {
+
+  /* 🔥 convert to bottom sheet */
+  .widget-popup {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 70vh;
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    z-index: 99999;
+    overflow-y: auto;
+    background: #fff;
+  }
+
+  /* remove conflicting rule */
+  .date-popup {
+    position: unset !important;
+    width: 100%;
+  }
+
+  /* calendar sizing */
+  .rdrCalendarWrapper {
+    font-size: 12px;
+    width: 100%;
+  }
+
+  .rdrMonth {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* BACKDROP (important for UX) */
+  .calendar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99998;
+  }
+
+  /* BOTTOM SHEET */
+  .widget-popup {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75vh; /* better than max-height */
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    z-index: 99999;
+    overflow-y: auto;
+    background: #fff;
+
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* REMOVE desktop constraint */
+  .date-popup {
+    position: unset !important;
+    width: 100%;
+  }
+
+  /* CALENDAR IMPROVEMENTS */
+  .rdrCalendarWrapper {
+    width: 100%;
+    font-size: 13px; /* slightly bigger for touch */
+  }
+
+  .rdrMonth {
+    width: 100% !important;
+  }
+
+  /* BETTER TOUCH TARGETS */
+  .rdrDay {
+    height: 42px;   /* was too small */
+  }
+
+  .rdrDayNumber span {
+    font-size: 14px;
+  }
+}

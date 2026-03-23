@@ -15,6 +15,7 @@ const searchRoutes = require("./routes/searchRoute");
 const metaRoutes = require("./routes/metaRoute");
 const profileRoutes=require("./routes/profileRoute");
 const hostDashboardRoute=require("./routes/hostDashboardRoute")
+const ReviewSummaryRoute=require("./routes/ReviewSummaryRoute")
 app.use(cors());
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
@@ -35,6 +36,7 @@ app.use("/api/search", searchRoutes);
 app.use("/api/meta", metaRoutes);
 app.use("/api/profile",profileRoutes);
 app.use("/api/host",hostDashboardRoute);
+app.use("/api/ai",ReviewSummaryRoute)
 
 const PORT = process.env.PORT;
 

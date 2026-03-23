@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/ListingCards.css";
 import WishButton from "./WishButton";  
-
+import { getAIReviewSummary } from "../api/personalization.api";
 const ListingCards = ({
   _id,               
   image,
@@ -39,7 +39,7 @@ const ListingCards = ({
         </div>
         {(rating > 0 || reviewCount > 0) && (
           <div className="rating-row">
-            {rating > 0 && <div className="rating-box">{rating}</div>}
+            {rating > 0 && <div className="rating-box">{Number(rating).toFixed(1).replace(/\.0$/, "")}</div>}
             <div className="rating-text">
               {ratingLabel && <span className="rating-label">{ratingLabel}</span>}
               {reviewCount > 0 && (

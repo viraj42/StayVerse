@@ -35,12 +35,15 @@ const facilityIcons = {
   "Swimming Pool": Icons.WavesLadder,
   "Air Conditioning": Icons.Fan
 };
-
+import { getAIReviewSummary } from "../api/personalization.api";
 function ListingDetails() {
      const [alertMsg, setAlertMsg] = useState("");
   const { isAuthenticated, loading } = useAuthContext();
    const { id } = useParams();
   const navigate = useNavigate();
+
+  const [aiReview, setAiReview] = useState(null);
+const [aiLoading, setAiLoading] = useState(false);
 
 const [blockedDates, setBlockedDates] = useState([]);
 const [availableRooms, setAvailableRooms] = useState(0);
@@ -110,6 +113,24 @@ useEffect(() => {
     }
   };
   if (id) loadBlockedDates();
+}, [id]);
+
+useEffect(() => {
+  const fetchAIReview = async () => {
+    try {
+      setAiLoading(true);
+      const data = await getAIReviewSummary(id);
+      console.log(data);
+      
+      setAiReview(data);
+    } catch (err) {
+      console.log("AI Review fetch failed");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  if (id) fetchAIReview();
 }, [id]);
 
 //avaiable rooms
@@ -220,7 +241,7 @@ useEffect(() => {
             <div className="listing-sub-info">
               <span>
                 <Star size={16} fill="var(--text-primary)" />{" "}
-                <b>{listDetail.avgRating}</b>
+                <b>{Number(listDetail.avgRating).toFixed(1).replace(/\.0$/, "")}</b>
               </span>
               <span className="dot">·</span>
               <span className="underline">
@@ -314,6 +335,44 @@ useEffect(() => {
           </div>
 
           <div className="listing-details-right">
+                   {/* ✅ AI REVIEW BLOCK */}
+  {aiReview?.hasReviews && aiReview?.aiSummary && (
+    <div className="ai-review-card">
+      <h3 className="ai-title">
+        Guest Experience Summary
+      </h3>
+
+      <div className="ai-headline">
+        {aiReview.aiSummary.headline}
+      </div>
+
+      <p className="ai-summary">
+        {aiReview.aiSummary.summary}
+      </p>
+
+      <div className="ai-section">
+        <strong>Highlights</strong>
+        <ul>
+          {aiReview.aiSummary.highlights?.map((item, i) => (
+            <li key={i}>• {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      {aiReview.aiSummary.concerns?.length > 0 && (
+        <div className="ai-section">
+          <strong>Concerns</strong>
+          <ul>
+            {aiReview.aiSummary.concerns.map((item, i) => (
+              <li key={i}>• {item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )}
+
+            
             <div className="booking-card">
 
               <div className="booking-header">
@@ -324,7 +383,7 @@ useEffect(() => {
                 </h3>
                 <div className="rating-tag">
                   <Star size={14} fill="var(--text-primary)" />
-                  <span>{listDetail.avgRating}</span>
+                  <span>{Number(listDetail.avgRating).toFixed(1).replace(/\.0$/, "")}</span>
                 </div>
               </div>
 
